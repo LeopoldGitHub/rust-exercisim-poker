@@ -12,7 +12,7 @@ pub(crate) struct Hand{
 }
 
 impl Hand {
-    pub(crate) fn new(is_flush:bool, cards:Vec<(Rank, i32)>, index:usize, strength:HandStrength) ->Self{
+    pub(crate) fn new(is_flush:bool, strength:HandStrength,cards:Vec<(Rank, i32)>, index:usize ) ->Self{
         Self{
             is_flush,
             index,

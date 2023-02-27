@@ -11,6 +11,7 @@ use crate::hands::hand_strength::HandStrength;
 /// the winning hand(s) as were passed in, not reconstructed strings which happen to be equal.
 pub fn winning_hands<'a>(hands: &[&'a str]) -> Vec<&'a str> {
     let hands_copy = hands.clone();
+    let mut hands_vec=Vec::new();
     // creates a iterator with a yielded counter over the given array of hands
     hands_copy
         .iter()
@@ -27,7 +28,6 @@ pub fn winning_hands<'a>(hands: &[&'a str]) -> Vec<&'a str> {
             cards
                 .split(" ")
                 .for_each(|card| {
-
                     ranks_hash
                         // trys to get the value to the given Card Rank
                         .entry(Rank::new(&card))
@@ -35,21 +35,37 @@ pub fn winning_hands<'a>(hands: &[&'a str]) -> Vec<&'a str> {
                         .and_modify(|n| *n += 1)
                         // or if the key is not found adds it with a value of 1
                         .or_insert(1);
-                    //
+                    // puts the suit of the card into a hashSet
                     suit_hash
                         .insert(Suit::new(&card));
                 }
                 );
-            let mut ranks_vec:Vec<(Rank,i32)>=ranks_hash.into_iter().collect();
-            ranks_vec.sort_by(|a,b|b.1.cmp(&a.1))
+            // gets a vec out of the hashmap to enable sorting
+            let mut ranks_vec: Vec<(Rank, i32)> = ranks_hash.into_iter().collect();
+            // now sorts the vec first by the i32( count of the Rank in a hand)
+            // and then by the Rank itself
+            ranks_vec.sort_by(|a, b| {
+                b.1.cmp(&a.1)
+                    .then_with(|| b.0.cmp(&a.0))
+            });
+            // creates a new Hand and pushes it into the vec for it
+            hands_vec.push(
+                Hand::new(
+                    is_flush(&suit_hash),
+                    HandStrength::new(
+                        &ranks_vec,
+                        is_flush(&suit_hash)),
+                    ranks_vec,
+                    index))
+        });
 
-            // hands_vec.push(Hand::new(is_flush(&card_values),/*TODO*/,index,))
-        })
+
+
 
 
     unimplemented!("Out of {hands:?}, which hand wins?")
 }
 
-fn is_flush(cards: &HashSet<Suit>) -> bool {
-    cards.len()==1
+fn is_flush(suits: &HashSet<Suit>) -> bool {
+    suits.len() == 1
 }

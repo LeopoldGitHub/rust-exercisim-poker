@@ -1,3 +1,5 @@
+use std::cmp::Ordering;
+
 pub(crate) struct Card {
     rank: Rank,
     suit: Suit,
@@ -9,7 +11,7 @@ pub(crate) enum Suit {
     Spades,
     Diamonds,
 }
-
+#[derive(PartialOrd, PartialEq,Eq)]
 pub(crate) enum Rank {
     Ace = 14,
     King = 13,
@@ -26,8 +28,17 @@ pub(crate) enum Rank {
     Two = 2,
 }
 
+impl Ord for Rank {
+    fn cmp(&self, other: &Self) -> Ordering {
+        let self_usize=self as usize;
+        let other_usize =other as usize;
+        self_usize.cmp(&other_usize)
+    }
+}
+
 impl Rank {
     pub(crate) fn new(card: &str) -> Rank {
+        // matches the ascii of the string to get the Rank, does not look at the last char
         match card.to_uppercase().as_bytes() {
             [65, _] => Self::Ace,
             [75, _] => Self::King,
@@ -48,6 +59,7 @@ impl Rank {
 
 impl Suit {
     pub(crate) fn new(card: &str) -> Self {
+        // matches the ascii of the string to get the Suit but only looks at the last char
         match card.to_uppercase().as_bytes() {
             [.., 67] => Self::Clubs,
             [.., 72] => Self::Hearts,
