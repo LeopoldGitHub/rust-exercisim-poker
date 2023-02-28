@@ -4,33 +4,29 @@ use crate::hands::hand_strength::HandStrength;
 pub(crate) mod card;
 pub(crate) mod hand_strength;
 
-pub(crate) struct Hand{
-    is_flush:bool,
-    cards:Vec<(Rank, i32)>,
-    index:usize,
-    strength: HandStrength
+
+pub(crate) struct Hand {
+    cards: Vec<(Rank, i32)>,
+    index: usize,
+    strength: HandStrength,
 }
 
 impl Hand {
-    pub(crate) fn new(is_flush:bool, strength:HandStrength,cards:Vec<(Rank, i32)>, index:usize ) ->Self{
-        Self{
-            is_flush,
+    pub(crate) fn new( strength: HandStrength, cards: Vec<(Rank, i32)>, index: usize) -> Self {
+        Self {
+
             index,
             strength,
-            cards
+            cards,
         }
-
     }
-    pub(crate) fn get_index(&self)->&usize{
-        &self.index
+    pub(crate) fn get_index(&self) -> usize {
+        self.index
     }
-    pub(crate) fn get_strength(&self)->&HandStrength{
+    pub(crate) fn get_strength(&self) -> &HandStrength {
         &self.strength
     }
-    pub(crate) fn is_flush(&self)->&bool{
-        &self.is_flush
-    }
-    pub(crate) fn get_cards(&self)->&Vec<(Rank, i32)>{
-        &self.cards
+    pub(crate) fn get_card_ranks(&self) -> Vec<&Rank> {
+        self.cards.iter().map(|a| &a.0).collect::<Vec<&Rank>>()
     }
 }

@@ -1,7 +1,8 @@
 mod hands;
 
+use std::cmp::Ordering;
 use std::collections::{HashMap, HashSet};
-use crate::hands::card::{Card, Rank, Suit};
+use crate::hands::card::{Rank, Suit};
 use crate::hands::Hand;
 use crate::hands::hand_strength::HandStrength;
 
@@ -10,20 +11,18 @@ use crate::hands::hand_strength::HandStrength;
 /// Note the type signature: this function should return _the same_ reference to
 /// the winning hand(s) as were passed in, not reconstructed strings which happen to be equal.
 pub fn winning_hands<'a>(hands: &[&'a str]) -> Vec<&'a str> {
-    let hands_copy = hands.clone();
-    let mut hands_vec=Vec::new();
+    let mut hands_vec = Vec::new();
     // creates a iterator with a yielded counter over the given array of hands
-    hands_copy
+    hands
         .iter()
         .enumerate()
         .for_each(|hand| {
+            // splits the tuple the iterator provides into 2 variables
+            let (index, cards) = hand;
             // new hashmap to check for repeating Ranks and getting the amount.
             let mut ranks_hash = HashMap::new();
             // new hashset to check if all cards have the same suit.
             let mut suit_hash = HashSet::new();
-
-            // splits the tuple the iterator provides into 2 variables
-            let (index, cards) = hand;
             // splits our provided Hand into individual Cards
             cards
                 .split(" ")
@@ -48,22 +47,41 @@ pub fn winning_hands<'a>(hands: &[&'a str]) -> Vec<&'a str> {
                 b.1.cmp(&a.1)
                     .then_with(|| b.0.cmp(&a.0))
             });
+            // checks for a straight with a low Ace and reorders the Vec so that the ace is at the end
+            // !! vec has can only remove at the end alternative to sorting is reverse the vec
+            // then pop and save into another reverse and then push the saved value
+            match ranks_vec[..] {
+                [(Rank::Ace, _), (Rank::Five, _), (Rank::Four, _), (Rank::Three, _), (Rank::Two, _)] => ranks_vec.sort_by(|a, b| {
+                    if b.0 == Rank::Ace { Ordering::Less } else {
+                        b.0.cmp(&a.0)
+                    }
+                }),
+                _ => (),
+            };
             // creates a new Hand and pushes it into the vec for it
             hands_vec.push(
                 Hand::new(
-                    is_flush(&suit_hash),
+
                     HandStrength::new(
                         &ranks_vec,
                         is_flush(&suit_hash)),
                     ranks_vec,
                     index))
         });
-
-
-
-
-
-    unimplemented!("Out of {hands:?}, which hand wins?")
+    // now sorts the vec first by the Hand Strength and then by the Rank of the containing cards
+    hands_vec.sort_by(|a, b|
+        b.get_strength()
+            .cmp(&a.get_strength())
+            .then_with(||
+                b.get_card_ranks()
+                    .cmp(&a.get_card_ranks())));
+    // now filters the vector for all hands that have the same Cards in them as the winning hand
+    // and then gets their corresponding slice of the input.
+    // Finally all the slices are collected and returned as Vec of &str
+    hands_vec.iter()
+        .filter(|a| a.get_card_ranks() == hands_vec[0].get_card_ranks())
+        .map(|a| hands[a.get_index()])
+        .collect::<Vec<&str>>()
 }
 
 fn is_flush(suits: &HashSet<Suit>) -> bool {

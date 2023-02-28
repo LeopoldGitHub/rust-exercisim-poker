@@ -1,5 +1,6 @@
 use crate::hands::card::Rank;
 
+#[derive(Eq, Ord, PartialEq, PartialOrd)]
 pub(crate) enum HandStrength {
     RoyalFlush = 9,
     StraightFlush = 8,
@@ -26,25 +27,29 @@ impl HandStrength {
             (2, 2) => Self::TwoPairs,
             (2, _) => Self::Pair,
             // case 1,1 AND is_flush is true
-            (1, 1) if is_flush => get_flush_type(cards),
+            (1, 1) if is_flush => Self::get_flush_type(cards),
+            (1, 1) if Self::is_straight(&cards) => Self::Straight,
             // default case
             _ => Self::HighCard
         }
     }
+    fn is_straight(cards: &Vec<(Rank, i32)>) -> bool {
+        // iterates over the array
+        cards.windows(2).filter(|a| {
+            (a[0].0 as usize) == (a[1].0 as usize) + 1 || if a[1].0 == Rank::Ace {
+                (a[0].0 as usize)+12 ==(a[1].0 as usize)
+            } else { false }
+
+        }).count() == 4
+    }
     // helper function to get the type of flush
     fn get_flush_type(cards: &Vec<(Rank, i32)>) -> Self {
         // gets the Rank values out of the vec and converts them into their usize value
-        let ranks_vec = cards.iter().map(|a| *a.0 as usize).collect();
+        let ranks_vec: Vec<usize> = cards.iter().map(|a| a.0 as usize).collect();
         // now matches them
         match ranks_vec[..] {
             [14, 13, 12, 11, 10] => Self::RoyalFlush,
-            [..] if ranks_vec
-                // goes over the vec in steps of 2
-                .windows(2)
-                // compares the values to each other
-                .filter(|a| a[0] == a[1] + 1)
-                // counts true and compares it to 4
-                .count() == 4 => Self::StraightFlush,
+            [..] if Self::is_straight(&cards) => Self::StraightFlush,
             // default case
             _ => Self::Flush,
         }
