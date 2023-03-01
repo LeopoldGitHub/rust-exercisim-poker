@@ -1,10 +1,13 @@
-use crate::hands::card::Rank;
+use crate::hands::card::rank::Rank;
 use crate::hands::hand_strength::HandStrength;
 
 pub(crate) mod card;
 pub(crate) mod hand_strength;
 
-
+// new struct to Hold a poker hand containing
+// a) the individual cards Rank with their occurrence
+// b) the index of the hand  the input string
+// c) the Strength of the hand
 pub(crate) struct Hand {
     cards: Vec<(Rank, i32)>,
     index: usize,
@@ -14,7 +17,6 @@ pub(crate) struct Hand {
 impl Hand {
     pub(crate) fn new( strength: HandStrength, cards: Vec<(Rank, i32)>, index: usize) -> Self {
         Self {
-
             index,
             strength,
             cards,

@@ -2,7 +2,8 @@ mod hands;
 
 use std::cmp::Ordering;
 use std::collections::{HashMap, HashSet};
-use crate::hands::card::{Rank, Suit};
+use crate::hands::card::rank::Rank;
+use crate::hands::card::suit::Suit;
 use crate::hands::Hand;
 use crate::hands::hand_strength::HandStrength;
 
@@ -61,7 +62,6 @@ pub fn winning_hands<'a>(hands: &[&'a str]) -> Vec<&'a str> {
             // creates a new Hand and pushes it into the vec for it
             hands_vec.push(
                 Hand::new(
-
                     HandStrength::new(
                         &ranks_vec,
                         is_flush(&suit_hash)),
@@ -75,6 +75,7 @@ pub fn winning_hands<'a>(hands: &[&'a str]) -> Vec<&'a str> {
             .then_with(||
                 b.get_card_ranks()
                     .cmp(&a.get_card_ranks())));
+
     // now filters the vector for all hands that have the same Cards in them as the winning hand
     // and then gets their corresponding slice of the input.
     // Finally all the slices are collected and returned as Vec of &str
@@ -83,7 +84,7 @@ pub fn winning_hands<'a>(hands: &[&'a str]) -> Vec<&'a str> {
         .map(|a| hands[a.get_index()])
         .collect::<Vec<&str>>()
 }
-
+// checks if the hand is a flush by checking the amount of different suits in the hand
 fn is_flush(suits: &HashSet<Suit>) -> bool {
     suits.len() == 1
 }
