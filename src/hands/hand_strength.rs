@@ -34,11 +34,12 @@ impl HandStrength {
         }
     }
     fn is_straight(cards: &Vec<(Rank, i32)>) -> bool {
-        // iterates over the array
+        // iterates over the array in steps of 2 and returns true if they have adjacent values
         cards.windows(2).filter(|a| {
-            (a[0].0 as usize) == (a[1].0 as usize) + 1 || if a[1].0 == Rank::Ace {
-                (a[0].0 as usize)+12 ==(a[1].0 as usize)
-            } else { false }
+            // (a[0].0 as usize) == (a[1].0 as usize) + 1 || if a[1].0 == Rank::Ace {
+            //     (a[0].0 as usize)+12 ==(a[1].0 as usize)
+            // } else { false }
+            (a[0].0 as usize)&(a[1].0 as usize)>0
 
         }).count() == 4
     }

@@ -20,22 +20,23 @@ impl Suit {
         }
     }
 }
-
+// enum of Card Ranks with a given value of 11 Bitwise shifted to the left x times
+// to make the check for straights easier with Aces as 1 in a 5 4 3 2 Ace straight
 #[derive(Clone, Copy, PartialOrd, PartialEq, Eq, Hash)]
 pub(crate) enum Rank {
-    Ace = 14,
-    King = 13,
-    Queen = 12,
-    Jack = 11,
-    Ten = 10,
-    Nine = 9,
-    Eight = 8,
-    Seven = 7,
-    Six = 6,
-    Five = 5,
-    Four = 4,
-    Three = 3,
-    Two = 2,
+    Ace = (3<<12)+1,
+    King = 3<<11,
+    Queen = 3<<10,
+    Jack = 3<<9,
+    Ten = 3<<8,
+    Nine = 3<<7,
+    Eight = 3<<6,
+    Seven = 3<<5,
+    Six = 3<<4,
+    Five = 3<<3,
+    Four = 3<<2,
+    Three = 3<<1,
+    Two = 3,
 }
 
 impl Ord for Rank {
