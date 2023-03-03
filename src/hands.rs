@@ -22,13 +22,13 @@ impl Hand {
             cards,
         }
     }
-    pub(crate) fn get_index(&self) -> usize {
+    pub(crate) fn index(&self) -> usize {
         self.index
     }
-    pub(crate) fn get_strength(&self) -> &HandStrength {
+    pub(crate) fn strength(&self) -> &HandStrength {
         &self.strength
     }
-    pub(crate) fn get_card_ranks(&self) -> Vec<&Rank> {
+    pub(crate) fn card_ranks(&self) -> Vec<&Rank> {
         self.cards.iter().map(|a| &a.0).collect::<Vec<&Rank>>()
     }
 }
