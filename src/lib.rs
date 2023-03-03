@@ -70,18 +70,18 @@ pub fn winning_hands<'a>(hands: &[&'a str]) -> Vec<&'a str> {
         });
     // now sorts the vec first by the Hand Strength and then by the Rank of the containing cards
     hands_vec.sort_by(|a, b|
-        b.get_strength()
-            .cmp(&a.get_strength())
+        b.strength()
+            .cmp(&a.strength())
             .then_with(||
-                b.get_card_ranks()
-                    .cmp(&a.get_card_ranks())));
+                b.card_ranks()
+                    .cmp(&a.card_ranks())));
 
     // now filters the vector for all hands that have the same Cards in them as the winning hand
     // and then gets their corresponding slice of the input.
     // Finally all the slices are collected and returned as Vec of &str
     hands_vec.iter()
-        .filter(|a| a.get_card_ranks() == hands_vec[0].get_card_ranks())
-        .map(|a| hands[a.get_index()])
+        .filter(|a| a.card_ranks() == hands_vec[0].card_ranks())
+        .map(|a| hands[a.index()])
         .collect::<Vec<&str>>()
 }
 // checks if the hand is a flush by checking the amount of different suits in the hand

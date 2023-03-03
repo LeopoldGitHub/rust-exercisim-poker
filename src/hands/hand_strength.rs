@@ -27,7 +27,7 @@ impl HandStrength {
             (2, 2) => Self::TwoPairs,
             (2, _) => Self::Pair,
             // case 1,1 AND is_flush is true
-            (1, 1) if is_flush => Self::get_flush_type(cards),
+            (1, 1) if is_flush => Self::flush_type(cards),
             (1, 1) if Self::is_straight(&cards) => Self::Straight,
             // default case
             _ => Self::HighCard
@@ -42,7 +42,7 @@ impl HandStrength {
         }).count() == 4
     }
     // helper function to get the type of flush
-    fn get_flush_type(cards: &Vec<(Rank, i32)>) -> Self {
+    fn flush_type(cards: &Vec<(Rank, i32)>) -> Self {
         // gets the Rank values out of the vec and converts them into their usize value
         let ranks_vec: Vec<usize> = cards.iter().map(|a| a.0 as usize).collect();
         // now matches them
